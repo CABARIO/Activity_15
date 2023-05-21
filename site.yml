@@ -1,0 +1,52 @@
+---
+
+- hosts: All
+  become: true
+  pre_tasks:
+
+  -  name: Install update(Ubuntu)
+     tags: always
+     apt:
+       upgrade: dist
+       update_cache: yes
+     when: ansible_distribution == "Ubuntu"
+
+  -  name: Install update(CentOS)
+     tags: always
+     dnf:
+       update_only: yes
+       update_cache: yes
+     when: ansible_distribution == "CentOS"
+
+- hosts: web_server
+  become: true
+  tasks:
+
+  - name: Install cinder in Ubuntu
+    apt:
+      name:
+        - cinder-api
+      state: latest
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: db_server
+  become: true
+  tasks:
+
+  - name: Install Horizon in Ubuntu
+    apt:
+      name:
+        - openstack-dashboard
+      state: latest
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: file_server
+  become: true
+  tasks:
+
+  - name: Install neutron-server
+    apt:
+      name:
+        - neutron-server
+      state: latest
+    when: ansible_distribution == "Ubuntu"
